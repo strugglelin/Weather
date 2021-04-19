@@ -12,6 +12,9 @@ import retrofit2.http.Query
  *  description:
  */
 interface PlaceService {
+    /**
+     * 获取全球城市
+     */
     @GET("v2/place?token=${App.TOKEN}&lang=zh_CN")
     fun searchPlaces(@Query("query") query: String):Call<PlaceResponse>
 }

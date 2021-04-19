@@ -12,7 +12,7 @@ import android.content.Context
 class App : Application() {
 
     companion object {
-        const val TOKEN = "" // 彩云天气令牌
+        const val TOKEN = "Dd9EplGhvKADWREk" // 彩云天气令牌
         @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
     }

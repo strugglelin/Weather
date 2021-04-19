@@ -1,5 +1,6 @@
 package com.app.weather.ui.place
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.weather.MainActivity
 import com.app.weather.R
+import com.app.weather.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 /**
@@ -31,6 +34,19 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        if (activity is MainActivity && viewModel.isSavedPlace()) {
+            val place = viewModel.getSavedPlace()
+            val intent = Intent(context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", place.location.lng)
+                putExtra("location_lat", place.location.lat)
+                putExtra("place_name", place.name)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
+
         val layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this, viewModel.placeList)
@@ -46,8 +62,10 @@ class PlaceFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         }
-
-        viewModel.placeLiveData.observe(this, Observer { result ->
+        searchPlaceEdit.setOnEditorActionListener { view, id, event ->
+            true
+        }
+        viewModel.placeLiveData.observe(viewLifecycleOwner, Observer { result ->
             var places = result.getOrNull() // kotlin 1.3.11 result 不能转 List
             if (places != null) {
                 recyclerView.visibility = View.VISIBLE
@@ -61,4 +79,5 @@ class PlaceFragment : Fragment() {
             }
         })
     }
+
 }
